@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/batunpc/fragments/issues"
   },
-  "homepage": "https://github.com/batunpc/fragments#readme"
+  "homepage": "https://github.com/batunpc/fragments#readme",
+  "devDependencies": {
+    "prettier": "2.7.1"
+  }
 }
