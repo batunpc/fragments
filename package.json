@@ -1,0 +1,21 @@
+{
+  "name": "fragments",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Fragments back-end API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/batunpc/fragments.git"
+  },
+  "keywords": [],
+  "author": "Batuhan Ipci",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/batunpc/fragments/issues"
+  },
+  "homepage": "https://github.com/batunpc/fragments#readme"
+}
