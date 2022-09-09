@@ -24,13 +24,12 @@ Run [Eslint](https://eslint.org/docs/latest/user-guide/getting-started) to make 
 npm run lint # Run eslint
 ```
 
-## Notes
-
 ---
+
+## Notes
 
 ### ◎ ESLint
 
-<desc>
 If you have issues with process.env, add node:true to the env section of your .eslintrc file. Eslint needs to know if you are using node variables like `process`.
 
 ### ◎ node-inspector
