@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Fragments back-end API",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --config .eslintrc.js src/**",
@@ -12,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/batunpc/fragments.git"
+    "url": "https://github.com/fragments/fragments.git"
   },
   "keywords": [],
   "author": "Batuhan Ipci",
@@ -29,6 +30,7 @@
   "dependencies": {
     "compression": "^1.7.4",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "helmet": "^6.0.0",
     "pino": "^8.5.0",
