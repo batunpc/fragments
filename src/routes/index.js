@@ -1,8 +1,9 @@
 // src/routes/index.js
+
 const express = require('express');
 
 // version and author from package.json
-const { version, author, homepage } = require('../../package.json');
+const { version, author, githubUrl } = require('../../package.json');
 
 // Create a router that we can use to mount our API
 const router = express.Router();
@@ -21,8 +22,8 @@ router.get('/', (req, res) => {
   // Client's shouldn't cache this response (always request it fresh)
   res.setHeader('Cache-Control', 'no-cache');
   // Send a 200 'OK' response
-  res.status(200).json(createSuccessResponse({ version, author, homepage })); //response
-  console.log(homepage);
+
+  res.status(200).json(createSuccessResponse({ version, author, githubUrl }));
 });
 
 module.exports = router;
