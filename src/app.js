@@ -26,7 +26,7 @@ app.use(passport.initialize());
 
 // Routes
 app.use('/', require('./routes'));
-
+// Pass along an error object to the error-handling middleware
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
