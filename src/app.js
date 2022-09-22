@@ -9,7 +9,7 @@ const pino = require('pino-http')({ logger });
 
 const passport = require('passport');
 const authentication = require('./authorization/index');
-
+const { createErrorResponse } = require('./response');
 const app = express();
 
 // Use logging middleware
@@ -27,16 +27,9 @@ app.use(passport.initialize());
 // Routes
 app.use('/', require('./routes'));
 // Pass along an error object to the error-handling middleware
-app.use((req, res) => {
-  res.status(404).json({
-    status: 'error',
-    error: {
-      message: 'not found',
-      code: 404,
-    },
-  });
+app.use((_, res) => {
+  res.status(404).json(createErrorResponse(404, 'not found'));
 });
-
 // Add error-handling middleware to deal with anything else
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
