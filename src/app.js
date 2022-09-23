@@ -37,13 +37,7 @@ app.use((err, req, res, next) => {
   const message = err.message || 'unable to process request';
 
   if (status > 499) logger.error({ err }, 'Error processing request');
-  res.status(status).json({
-    status: 'error',
-    error: {
-      message,
-      code: status,
-    },
-  });
+  res.status(status).json(createErrorResponse(status, message));
 });
 
 module.exports = app;
