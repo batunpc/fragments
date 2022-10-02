@@ -38,9 +38,7 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    const results = await listFragments(ownerId, expand);
-    if (results) return results;
-    throw new Error(`No fragments found for user ${ownerId}`);
+    return await listFragments(ownerId, expand);
   }
 
   /**
