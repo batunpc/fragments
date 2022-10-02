@@ -18,8 +18,7 @@ const validTypes = ['text/plain'];
 
 class Fragment {
   constructor({ id, ownerId, type, created, updated, size = 0 }) {
-    if (!ownerId) throw new Error('ownerId is required');
-    if (!type) throw new Error('Fragment type is required');
+    if (!ownerId || !type) throw new Error('ownerId and/or type missing');
     if (typeof size !== 'number') throw new Error(`Fragment size must be a number (got ${size})`);
     else if (size < 0) throw new Error(`Fragment size must be a positive number (got: ${size})`);
     if (!Fragment.isSupportedType(type)) throw new Error(`Unsupported fragment type: ${type}`);
@@ -40,8 +39,8 @@ class Fragment {
    */
   static async byUser(ownerId, expand = false) {
     const results = await listFragments(ownerId, expand);
-    if (!results) throw new Error(`No fragments found for user ${ownerId}`);
-    return results;
+    if (results) return results;
+    throw new Error(`No fragments found for user ${ownerId}`);
   }
 
   /**
@@ -52,8 +51,8 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     const fragment = await readFragment(ownerId, id);
-    if (!fragment) throw new Error(`Fragment ${id} not found`);
-    return fragment;
+    if (fragment) return fragment;
+    throw new Error(`Fragment ${id} not found`);
   }
 
   /**
@@ -90,10 +89,11 @@ class Fragment {
    * @returns Promise
    */
   async setData(data) {
-    if (!data) throw new Error('Error writing fragment data');
-    this.size = data.length;
-    this.updated = new Date().getMilliseconds();
-    return await writeFragmentData(this);
+    if (data) {
+      this.size = data.length;
+      await writeFragmentData(this.ownerId, this.id, data);
+      return this.save();
+    } else throw new Error('Error writing fragment data');
   }
 
   /**
@@ -111,7 +111,7 @@ class Fragment {
    * @returns {boolean} true if fragment's type is text/*
    */
   get isText() {
-    return this.mimeType.match(/text\/+/) ? true : false;
+    return this.mimeType.startsWith('text/') ? true : false;
   }
 
   /**
