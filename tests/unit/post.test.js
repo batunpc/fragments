@@ -48,4 +48,19 @@ describe('POST /v1/fragments ', () => {
       .set('Content-Type', 'image/gif');
     expect(415);
   });
+
+  test('Internal server error', async () => {
+    await request(app).post('/v1/fragments').auth('user1@email.com', 'password1');
+  });
+
+  // check if API_URL is undefined
+  test('API_URL is undefined', async () => {
+    process.env.API_URL = '';
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/plain')
+      .send('palpatine');
+    expect(res.headers.location).toBe(undefined);
+  });
 });
