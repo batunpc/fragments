@@ -14,17 +14,20 @@ describe('POST /v1/fragments ', () => {
 
   test('authenticated users can create a plain text fragment', async () => {
     const fragment = ['id', 'ownerId', 'created', 'updated', 'type', 'size'];
+    process.env.API_URL = 'true';
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('palpatine');
+
     const body = JSON.parse(res.text);
 
     expect(res.statusCode).toBe(201);
     expect(body.fragment.type).toBe('text/plain');
     expect(Object.keys(body.fragment)).toEqual(expect.arrayContaining(fragment));
     expect(body.fragment.size).toEqual(9); //palpatine
+    expect(res.headers.location).toBe('true/v1/fragments/' + body.fragment.id);
   });
 
   test('response include a Location header with a URL to GET the fragment', async () => {
@@ -33,6 +36,7 @@ describe('POST /v1/fragments ', () => {
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('bobafett');
+    expect(res.header.location).toEqual(expect.stringContaining('/v1/fragments/'));
     expect(res.statusCode).toBe(201);
     expect(res.headers).toHaveProperty('location');
   });
