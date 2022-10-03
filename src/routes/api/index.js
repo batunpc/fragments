@@ -7,10 +7,25 @@ const express = require('express');
 
 // Create a router on which to mount our API endpoints
 const router = express.Router();
+const contentType = require('content-type');
+const { Fragment } = require('../../model/fragment');
 
-// Define our first route, which will be: GET /v1/fragments
+const rawBody = () =>
+  // raw binary body parser
+  express.raw({
+    inflate: true,
+    limit: '5mb',
+    type: (req) => {
+      const { type } = contentType.parse(req);
+      return Fragment.isSupportedType(type);
+    },
+  });
+
+// == GET == /v1/fragments
 router.get('/fragments', require('./get'));
 
-// Other routes will go here later on...
+// == POST == /v1/fragments
+// Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
+router.post('/fragments', rawBody(), require('./post'));
 
 module.exports = router;
