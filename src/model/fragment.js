@@ -60,7 +60,6 @@ class Fragment {
    * @returns Promise
    */
   static delete(ownerId, id) {
-    console.log(`Deleting fragment ${id} for user ${ownerId}`);
     return deleteFragment(ownerId, id);
   }
 
@@ -117,7 +116,6 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    //Returns the formats into which this fragment type can be converted
     return validTypes.filter((type) => type !== this.type);
   }
 
