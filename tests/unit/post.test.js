@@ -25,9 +25,8 @@ describe('POST /v1/fragments ', () => {
 
     expect(res.statusCode).toBe(201);
     expect(body.fragment.type).toBe('text/plain');
-    expect(Object.keys(body.fragment)).toEqual(expect.arrayContaining(fragment));
     expect(body.fragment.size).toEqual(9); //palpatine
-    expect(res.headers.location).toBe('true/v1/fragments/' + body.fragment.id);
+    expect(Object.keys(body.fragment)).toEqual(expect.arrayContaining(fragment));
   });
 
   test('response include a Location header with a URL to GET the fragment', async () => {
@@ -36,9 +35,9 @@ describe('POST /v1/fragments ', () => {
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('bobafett');
-    expect(res.header.location).toEqual(expect.stringContaining('/v1/fragments/'));
     expect(res.statusCode).toBe(201);
     expect(res.headers).toHaveProperty('location');
+    expect(res.header.location).toEqual(expect.stringContaining('/v1/fragments/'));
   });
 
   test('get unsupported type error', async () => {
