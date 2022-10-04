@@ -29,6 +29,25 @@ describe('POST /v1/fragments ', () => {
     expect(Object.keys(body.fragment)).toEqual(expect.arrayContaining(fragment));
   });
 
+  test('The fragment has valid UUID and ISO Date', async () => {
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/plain')
+      .send('palpatine');
+
+    const fragmentId = JSON.parse(res.text).fragment.id;
+    const fragment = JSON.parse(res.text).fragment;
+
+    const uuidRegex = new RegExp(
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
+    );
+    const dateRegex = new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
+
+    expect(uuidRegex.test(fragmentId)).toBe(true);
+    expect(dateRegex.test(fragment.created)).toBe(true);
+  });
+
   test('response include a Location header with a URL to GET the fragment', async () => {
     const res = await request(app)
       .post('/v1/fragments')
