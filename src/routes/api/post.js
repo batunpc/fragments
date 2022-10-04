@@ -10,10 +10,6 @@ module.exports = async (req, res) => {
     logger.warn('Unsupported Content-Type');
     return res.status(415).json(createErrorResponse(415, 'Unsupported Content-Type'));
   }
-  if (!process.env.API_URL || process.env.API_URL === '') {
-    logger.warn('API_URL is undefined');
-    return res.status(500).json(createErrorResponse(500, 'API_URL is undefined'));
-  }
 
   try {
     const fragment = new Fragment({ ownerId: req.user, type: req.get('Content-Type') });

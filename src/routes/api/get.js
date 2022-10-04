@@ -7,11 +7,12 @@ const logger = require('../../logger');
  * Get a list of fragments for the current user
  */
 module.exports = async (req, res) => {
-  try {
-    const fragment = await Fragment.byUser(req.user);
+  const fragment = await Fragment.byUser(req.user);
+  if (fragment) {
     res.status(200).json(createSuccessResponse({ fragment }));
-  } catch (error) {
-    logger.warn('Fragment cannot be created due to ' + error);
-    return res.status(500).json(createErrorResponse(500, error.message));
+    logger.debug('Fragment data: ' + JSON.stringify(fragment, null, 2));
+  } else {
+    res.status(500).json(createErrorResponse('Internal server error'));
+    logger.warn('Fragment cannot be created - Internal server error');
   }
 };
