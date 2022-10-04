@@ -23,6 +23,7 @@ const rawBody = () =>
 
 // == GET == /v1/fragments
 router.get('/fragments', require('./get'));
+router.get('/fragments/:id', require('./getId'));
 
 // == POST == /v1/fragments
 // Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
