@@ -1,6 +1,14 @@
 const request = require('supertest');
 const app = require('../../src/app');
 
+const validPostReq = (url, type, data) => {
+  return request(app)
+    .post(url)
+    .auth('user1@email.com', 'password1')
+    .set('Content-Type', type)
+    .send(data);
+};
+
 describe('POST /v1/fragments ', () => {
   test('Invalid credentials should be unauthorized', async () => {
     await request(app).post('/v1/fragments').auth('batu@king.com', 'batuking');
@@ -13,32 +21,21 @@ describe('POST /v1/fragments ', () => {
   });
 
   test('authenticated users can create a plain text fragment', async () => {
+    const res = await validPostReq('/v1/fragments', 'text/plain', 'palpatine');
     const fragment = ['id', 'ownerId', 'created', 'updated', 'type', 'size'];
     process.env.API_URL = 'true';
-    const res = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send('palpatine');
-
     const body = JSON.parse(res.text);
 
     expect(res.statusCode).toBe(201);
     expect(body.fragment.type).toBe('text/plain');
-    expect(body.fragment.size).toEqual(9); //palpatine
+    expect(body.fragment.size).toEqual(9);
     expect(Object.keys(body.fragment)).toEqual(expect.arrayContaining(fragment));
   });
 
   test('The fragment has valid UUID and ISO Date', async () => {
-    const res = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send('palpatine');
-
+    const res = await validPostReq('/v1/fragments', 'text/plain', 'palpatine');
     const fragmentId = JSON.parse(res.text).fragment.id;
     const fragment = JSON.parse(res.text).fragment;
-
     const uuidRegex = new RegExp(
       /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
     );
@@ -49,11 +46,7 @@ describe('POST /v1/fragments ', () => {
   });
 
   test('response include a Location header with a URL to GET the fragment', async () => {
-    const res = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send('bobafett');
+    const res = await validPostReq('/v1/fragments', 'text/plain', 'palpatine');
     expect(res.statusCode).toBe(201);
     expect(res.headers).toHaveProperty('location');
     expect(res.header.location).toEqual(expect.stringContaining('/v1/fragments/'));

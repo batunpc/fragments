@@ -1,8 +1,11 @@
 // tests/unit/get.test.js
 
 const request = require('supertest');
-
 const app = require('../../src/app');
+
+const validGetReq = (url) => {
+  return request(app).get(url).auth('user1@email.com', 'password1');
+};
 
 describe('GET /v1/fragments', () => {
   test('incorrect credentials are denied', async () => {
@@ -13,7 +16,7 @@ describe('GET /v1/fragments', () => {
   });
 
   test('authenticated users can have empty array of fragments', async () => {
-    const response = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    const response = await validGetReq('/v1/fragments');
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ status: 'ok', fragment: [] });
   });
