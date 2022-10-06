@@ -26,7 +26,7 @@ describe('POST /v1/fragments ', () => {
 
     expect(res.statusCode).toBe(201);
     expect(res.body.fragment.type).toBe('text/plain');
-    expect(res.body.fragment.size).toEqual(9);
+    expect(res.body.fragment.size).toEqual(Buffer.byteLength('palpatine'));
     expect(Object.keys(res.body.fragment)).toEqual(expect.arrayContaining(fragment));
   });
 
