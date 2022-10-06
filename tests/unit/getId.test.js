@@ -1,7 +1,6 @@
 // tests/unit/getId.test.js
 
 const request = require('supertest');
-
 const app = require('../../src/app');
 
 describe('GET /v1/fragments/:id', () => {
@@ -24,7 +23,6 @@ describe('GET /v1/fragments/:id', () => {
       .set('Content-Type', 'text/plain')
       .send('This is fragment');
     const id = JSON.parse(res.text).fragment.id;
-    console.log(id);
     const getRes = await request(app)
       .get(`/v1/fragments/${id}`)
       .auth('user1@email.com', 'password1');

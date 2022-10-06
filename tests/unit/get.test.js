@@ -2,6 +2,7 @@
 
 const request = require('supertest');
 const app = require('../../src/app');
+const { Fragment } = require('../../src/model/fragment');
 
 const validGetReq = (url) => {
   return request(app).get(url).auth('user1@email.com', 'password1');
@@ -33,5 +34,11 @@ describe('GET /v1/fragments', () => {
     expect(response.status).toBe(200);
     expect(response.body.fragment).toEqual(expect.arrayContaining([id]));
     expect(response.body).toEqual({ status: 'ok', fragment: [id] });
+  });
+
+  test('request fail', async () => {
+    Fragment.byUser = jest.fn().mockReturnValue(null);
+    const res = await validGetReq('/v1/fragments');
+    expect(res.status).toBe(404);
   });
 });
