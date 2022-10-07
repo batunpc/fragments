@@ -12,7 +12,7 @@ describe('GET /v1/fragments/:id', () => {
   });
 
   test('should return a 404 for an invalid fragment id', async () => {
-    const res = await request(app).get('/v1/fragments/123').auth('user1@email.com', 'password1');
+    const res = await request(app).get('/v1/fragments/404-').auth('user1@email.com', 'password1');
     expect(res.status).toBe(404);
   });
 

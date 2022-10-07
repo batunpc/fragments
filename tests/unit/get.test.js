@@ -19,7 +19,7 @@ describe('GET /v1/fragments', () => {
   test('authenticated users can have empty array of fragments', async () => {
     const response = await validGetReq('/v1/fragments');
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ status: 'ok', fragment: [] });
+    expect(response.body).toEqual({ status: 'ok', data: [] });
   });
 
   test('authenticated users get a fragments array of ids: user with fragments', async () => {
@@ -32,12 +32,12 @@ describe('GET /v1/fragments', () => {
     const response = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
 
     expect(response.status).toBe(200);
-    expect(response.body.fragment).toEqual(expect.arrayContaining([id]));
-    expect(response.body).toEqual({ status: 'ok', fragment: [id] });
+    expect(response.body.data).toEqual(expect.arrayContaining([id]));
+    expect(response.body).toEqual({ status: 'ok', data: [id] });
   });
 
   test('request fail', async () => {
-    Fragment.byUser = jest.fn().mockReturnValue(null);
+    Fragment.byUser = jest.fn().mockRejectedValue(new Error('Fragment not found'));
     const res = await validGetReq('/v1/fragments');
     expect(res.status).toBe(404);
   });
