@@ -23,11 +23,13 @@ describe('POST /v1/fragments ', () => {
   test('authenticated users can create a plain text fragment', async () => {
     const res = await validPostReq('/v1/fragments', 'text/plain', 'palpatine');
     const fragment = ['id', 'ownerId', 'created', 'updated', 'type', 'size'];
+    const body = JSON.parse(res.text);
 
     expect(res.statusCode).toBe(201);
-    expect(res.body.fragment.type).toBe('text/plain');
-    expect(res.body.fragment.size).toEqual(Buffer.byteLength('palpatine'));
-    expect(Object.keys(res.body.fragment)).toEqual(expect.arrayContaining(fragment));
+    expect(body.fragment.type).toMatch(/text\/plain+/);
+    //expect(fragment.type).toBe('text/plain');
+    expect(body.fragment.size).toEqual(Buffer.byteLength('palpatine'));
+    expect(Object.keys(body.fragment)).toEqual(expect.arrayContaining(fragment));
   });
 
   test('The fragment has valid UUID and ISO Date', async () => {
@@ -45,12 +47,11 @@ describe('POST /v1/fragments ', () => {
 
   test('response include a Location header with a URL to GET the fragment', async () => {
     const res = await validPostReq('/v1/fragments', 'text/plain', 'palpatine');
+    const body = JSON.parse(res.text);
+    const fragmentId = body.fragment.id;
     expect(res.statusCode).toBe(201);
-
     expect(res.header).toHaveProperty('location');
-    expect(res.header.location).toEqual(
-      `${process.env.API_URL}/v1/fragments/${res.body.fragment.id}`
-    );
+    expect(res.header.location).toEqual(`${process.env.API_URL}/v1/fragments/${fragmentId}`);
   });
 
   test('get unsupported type error', async () => {

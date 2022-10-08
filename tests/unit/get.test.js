@@ -23,17 +23,19 @@ describe('GET /v1/fragments', () => {
   });
 
   test('authenticated users get a fragments array of ids: user with fragments', async () => {
-    const user = await request(app)
+    const req = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('Chewbacca!');
-    const id = user.body.fragment.id;
+    const body = JSON.parse(req.text);
+
+    const fragmentId = body.fragment.id;
     const response = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
 
     expect(response.status).toBe(200);
-    expect(response.body.data).toEqual(expect.arrayContaining([id]));
-    expect(response.body).toEqual({ status: 'ok', data: [id] });
+    expect(response.body.data).toEqual(expect.arrayContaining([fragmentId]));
+    expect(response.body).toEqual({ status: 'ok', data: [fragmentId] });
   });
 
   test('request fail', async () => {

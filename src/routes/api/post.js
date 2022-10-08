@@ -15,13 +15,20 @@ module.exports = async (req, res) => {
     logger.error('API_URL not set');
     return res.status(500).json(createErrorResponse(500, 'API_URL not set'));
   }
-
-  const fragment = new Fragment({ ownerId: req.user, type: req.get('Content-Type') });
-  await fragment.save();
-  await fragment.setData(req.body);
-  res.set('Location', `${process.env.API_URL}/v1/fragments/${fragment.id}`);
-  logger.info(`'Location', ${process.env.API_URL}/v1/fragments/${fragment.id}`);
-  res.status(201).json(createSuccessResponse({ fragment }));
-
-  logger.debug('New fragment data: ' + JSON.stringify(fragment, null, 2));
+  try {
+    const fragment = new Fragment({ ownerId: req.user, type: req.get('Content-Type') });
+    await fragment.save();
+    await fragment.setData(req.body);
+    logger.info('Fragment saved' + fragment);
+    res.set('Content-Type', fragment.type);
+    res.set('Location', `${process.env.API_URL}/v1/fragments/${fragment.id}`);
+    res.status(201).json(
+      createSuccessResponse({
+        fragment: fragment,
+      })
+    );
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
+  }
 };

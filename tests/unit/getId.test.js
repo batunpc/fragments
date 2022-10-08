@@ -27,6 +27,5 @@ describe('GET /v1/fragments/:id', () => {
       .get(`/v1/fragments/${id}`)
       .auth('user1@email.com', 'password1');
     expect(getRes.status).toBe(200);
-    //TODO: convert This is fragment to buffer and compare
   });
 });
