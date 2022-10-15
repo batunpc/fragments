@@ -10,11 +10,6 @@ module.exports = async (req, res) => {
     return res.status(415).json(createErrorResponse(415, 'Unsupported Content-Type'));
   }
 
-  // if API URL does not exist throw error
-  if (process.env.API_URL === undefined) {
-    logger.error('API_URL not set');
-    return res.status(500).json(createErrorResponse(500, 'API_URL not set'));
-  }
   try {
     const fragment = new Fragment({ ownerId: req.user, type: req.get('Content-Type') });
     await fragment.save();
