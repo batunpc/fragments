@@ -1,31 +1,30 @@
-# Stage 0: Install alpine Linux + node + npm + dependencies 
+# # Stage 0: Install alpine Linux + node + npm + dependencies 
 FROM node:16.15.1-alpine3.15@sha256:1fafca8cf41faf035192f5df1a5387656898bec6ac2f92f011d051ac2344f5c9 AS dependencies
 
 LABEL maintainer="Batuhan Ipci" \
-      description="Fragments node.js microservice"
+       description="Fragments node.js microservice"
 
 ENV PORT=8080
 ENV NODE_ENV=production
-
-# Reduce npm spam when installing within Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
+# # Reduce npm spam when installing within Docker
+# # https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
 ENV NPM_CONFIG_LOGLEVEL=warn
-# Disable colour when run inside Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#color
+# # Disable colour when run inside Docker
+# # https://docs.npmjs.com/cli/v8/using-npm/config#color
 ENV NPM_CONFIG_COLOR=false
 
-# Use /app as our working directory - cd /app
+# # Use /app as our working directory - cd /app
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files into the working dir (/app)
+# # Copy the package.json and package-lock.json files into the working dir (/app)
 COPY package*.json ./
 
-# Install dependencies
+# # Install dependencies
 RUN npm ci --only=production 
 
-################################# = Layer = #################################
+# ################################# = Layer = #################################
 
-# Stage 1: use dependencies to build the site
+# # Stage 1: use dependencies to build the site
 FROM node:16.15.1-alpine3.15@sha256:1fafca8cf41faf035192f5df1a5387656898bec6ac2f92f011d051ac2344f5c9 AS deploy
 
 WORKDIR /app
@@ -46,3 +45,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
    CMD curl --fail localhost:8080 || exit 1
 
+########################################= LAYER =########################################
