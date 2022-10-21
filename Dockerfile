@@ -1,34 +1,36 @@
-# = Dockerfile =
+# Stage 0: Install alpine Linux + node + npm + dependencies 
+FROM node:16.15.1-alpine3.15@sha256:1fafca8cf41faf035192f5df1a5387656898bec6ac2f92f011d051ac2344f5c9 AS dependencies
 
-# This file is necessary to build the image for the container that will run the application
-# reference: https://docs.docker.com/engine/reference/builder/
+LABEL maintainer="Batuhan Ipci" \
+      description="Fragments node.js microservice"
 
-# The FROM instruction initializes a new build stage and sets the Base Image for subsequent instructions.
-# Use node version 16.15.1
-FROM node:16.15.1
-
-LABEL maintainer="Batuhan Ipci"
-LABEL description="Fragments node.js microservice"
-
-# We default to use port 8080 in our service
 ENV PORT=8080
+ENV NODE_ENV=production
 
 # Reduce npm spam when installing within Docker
 # https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
 ENV NPM_CONFIG_LOGLEVEL=warn
-
 # Disable colour when run inside Docker
 # https://docs.npmjs.com/cli/v8/using-npm/config#color
 ENV NPM_CONFIG_COLOR=false
 
-# Use /app as our working directory
+# Use /app as our working directory - cd /app
 WORKDIR /app
 
 # Copy the package.json and package-lock.json files into the working dir (/app)
-COPY package.json package-lock.json ./
+COPY package*.json ./
 
-# Install node dependencies defined in package-lock.json
-RUN npm install
+# Install dependencies
+RUN npm ci --only=production 
+
+################################# = Layer = #################################
+
+# Stage 1: use dependencies to build the site
+FROM node:16.15.1-alpine3.15@sha256:1fafca8cf41faf035192f5df1a5387656898bec6ac2f92f011d051ac2344f5c9 AS deploy
+
+WORKDIR /app
+# Copy cached dependencies from previous stage, this will be much faster as it doesn't need to generate the dependencies again
+COPY --from=dependencies /app /app 
 
 # Copy src to /app/src/
 COPY ./src ./src
@@ -39,5 +41,8 @@ COPY ./tests/.htpasswd ./tests/.htpasswd
 # Run the server
 CMD npm start
 
-# We run our service on port 8080
 EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+   CMD curl --fail localhost:8080 || exit 1
+
