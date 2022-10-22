@@ -33,16 +33,4 @@ describe('GET /v1/fragments/:id/info', () => {
   test('will display 404 if invalid id provided', async () => {
     await request(app).get('/v1/fragments/404-').auth('user1@email.com', 'password1').expect(404);
   });
-  /* 
-  try {
-    const fragment = await Fragment.byId(req.user, req.params.id);
-    !fragment
-      ? res.status(404).json(createErrorResponse(404, 'Fragment not found'))
-      : res.status(200).json(createSuccessResponse({ fragment: fragment }));
-  } catch (err) {
-    logger.error({ err }, 'Error getting fragment by id');
-    res.status(500).json(createErrorResponse(500, 'Error getting fragment information'));
-  }
-
-*/
 });
