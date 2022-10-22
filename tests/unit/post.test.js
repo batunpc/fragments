@@ -55,7 +55,7 @@ describe('POST /v1/fragments ', () => {
   });
 
   test('get unsupported type error', async () => {
-    await validPostReq('/v1/fragments', 'image/gif', 'palpatine');
+    await validPostReq('/v1/fragments', 'unknown/space', 'palpatine');
     expect(415);
   });
 

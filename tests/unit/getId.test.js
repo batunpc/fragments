@@ -1,4 +1,4 @@
-// tests/unit/getId.test.js
+// tests/unit/get-id.test.js
 
 const request = require('supertest');
 const app = require('../../src/app');
@@ -16,16 +16,17 @@ describe('GET /v1/fragments/:id', () => {
     expect(res.status).toBe(404);
   });
 
-  test('should return a 200 and fragmen data for a valid fragment id', async () => {
-    const res = await request(app)
+  test('successfully created fragment data', async () => {
+    const req = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
-      .send('This is fragment');
-    const id = JSON.parse(res.text).fragment.id;
-    const getRes = await request(app)
-      .get(`/v1/fragments/${id}`)
+      .send('frag');
+    const body = JSON.parse(req.text);
+    const fragmentId = body.fragment.id;
+    const response = await request(app)
+      .get(`/v1/fragments/${fragmentId}`)
       .auth('user1@email.com', 'password1');
-    expect(getRes.status).toBe(200);
+    expect(response.status).toBe(200);
   });
 });

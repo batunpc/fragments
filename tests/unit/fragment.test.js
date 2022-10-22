@@ -3,20 +3,7 @@ const { Fragment } = require('../../src/model/fragment');
 // Wait for a certain number of ms. Returns a Promise.
 const wait = async (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const validTypes = [
-  'text/plain',
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-
-  `text/markdown`,
-  `text/html`,
-  `application/json`,
-  `image/png`,
-  `image/jpeg`,
-  `image/webp`,
-  `image/gif`,
-  */
-];
+const validTypes = ['text/plain', 'text/markdown', 'text/html', 'application/json'];
 
 describe('Fragment class', () => {
   test('common formats are supported', () => {
@@ -159,13 +146,10 @@ describe('Fragment class', () => {
   });
 
   describe('formats', () => {
-    test('formats returns the expected result for plain text', () => {
-      const fragment = new Fragment({
-        ownerId: '1234',
-        type: 'text/plain; charset=utf-8',
-        size: 0,
-      });
-      expect(fragment.formats).toEqual(['text/plain']);
+    test('fragment type is one of the supported types', () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 });
+      expect(fragment.type).toEqual('text/plain');
+      expect(validTypes).toContain(fragment.type);
     });
   });
 

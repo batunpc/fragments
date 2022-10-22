@@ -4,9 +4,9 @@ const logger = require('../../logger');
 
 module.exports = async (req, res) => {
   logger.debug('GET request', JSON.stringify(req.query));
-  const optExpand = req.query.expand === true;
+
   try {
-    const fragments = await Fragment.byUser(req.user, optExpand);
+    const fragments = await Fragment.byUser(req.user, req.query.expand);
     res.status(200).json(createSuccessResponse({ data: fragments }));
     logger.debug('Fragment data: ' + JSON.stringify(fragments, null, 2));
   } catch (error) {

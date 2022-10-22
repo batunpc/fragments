@@ -14,7 +14,9 @@ const {
   deleteFragment,
 } = require('./data');
 
-const validTypes = ['text/plain'];
+const validTypes = ['text/plain', 'text/markdown', 'text/html', 'application/json'];
+
+module.exports.validTypes = validTypes;
 
 class Fragment {
   constructor({ id, ownerId, type, created, updated, size = 0 }) {
