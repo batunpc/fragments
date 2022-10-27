@@ -38,7 +38,8 @@ COPY ./src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
 # Run the server
-CMD npm start
+CMD ["npm", "start"]
+
 
 EXPOSE 8080
 
