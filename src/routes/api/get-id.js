@@ -1,13 +1,17 @@
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
-const md = require('markdown-it')();
+const md = require('markdown-it')({
+  html: true,
+  linkify: true,
+  typographer: true,
+  // docs for other md options: https://github.com/markdown-it/markdown-it#init-with-presets-and-options
+});
 
 module.exports = async (req, res) => {
   const contentType = Fragment.getExtension(req.params.id);
-
+  const id = req.params.id.split('.').shift();
   try {
-    let id = req.params.id.split('.').shift();
     const fragment = await Fragment.byId(req.user, id);
     const fragmentData = await fragment.getData();
 
