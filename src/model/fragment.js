@@ -3,6 +3,8 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+//const markdownIt = require('markdown-it');
+const logger = require('../logger');
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -129,6 +131,46 @@ class Fragment {
   static isSupportedType(value) {
     return validTypes.some((element) => value.includes(element));
   }
+
+  static getExtension(id) {
+    let ext = id.split('.').pop();
+    id = id.split('.').shift();
+    let contentType = '';
+
+    switch (ext) {
+      case 'txt':
+        contentType = 'text/plain';
+        break;
+      case 'md':
+        contentType = 'text/markdown';
+        break;
+      case 'html':
+        contentType = 'text/html';
+        break;
+      case 'json':
+        contentType = 'application/json';
+        break;
+      default:
+        contentType = '';
+    }
+    logger.debug(`Fragment extension: ${ext} -> Content-Type: ${contentType}`);
+    return contentType;
+  }
+
+  // /* convert mine type with markdown-it */
+  // async convert(type) {
+  //   if (!Fragment.isSupportedType(type)) throw new Error(`Unsupported fragment type: ${type}`);
+
+  //   const data = await this.getData();
+  //   let converted = data;
+
+  //   if (this.type === 'text/markdown') {
+  //     const md = markdownIt();
+  //     converted = md.render(data.toString());
+  //   }
+
+  //   return converted;
+  // }
 }
 
 module.exports.Fragment = Fragment;
