@@ -10,23 +10,22 @@ describe('GET /v1/fragments/:id', () => {
   test('unauthenticated users cannot access the route', async () => {
     await request(app).get('/v1/fragments').expect(401);
   });
+});
 
-  test('should return a 404 for an invalid fragment id', async () => {
-    const res = await request(app).get('/v1/fragments/404-').auth('user1@email.com', 'password1');
-    expect(res.status).toBe(404);
-  });
-
-  test('successfully created fragment data', async () => {
+describe('GET /v1/fragments/:id.ext', () => {
+  test('getExt will return the corresponding content type', async () => {
+    // post a fragment
     const req = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'text/plain')
       .send('frag');
+
     const body = JSON.parse(req.text);
-    const fragmentId = body.fragment.id;
     const response = await request(app)
-      .get(`/v1/fragments/${fragmentId}`)
+      .get(`/v1/fragments/${body.fragment.id}.txt`)
       .auth('user1@email.com', 'password1');
+
     expect(response.status).toBe(200);
   });
 });

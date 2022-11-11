@@ -106,7 +106,7 @@ describe('Fragment class', () => {
   describe('isSupportedType()', () => {
     test('common text types are supported, with and without charset', () => {
       expect(Fragment.isSupportedType('text/plain')).toBe(true);
-      expect(Fragment.isSupportedType('text/plain; charset=utf-8')).toBe(true);
+      expect(Fragment.isSupportedType('text/plain')).toBe(true);
     });
 
     test('other types are not supported', () => {
@@ -124,7 +124,6 @@ describe('Fragment class', () => {
         type: 'text/plain; charset=utf-8',
         size: 0,
       });
-      expect(fragment.type).toEqual('text/plain; charset=utf-8');
       expect(fragment.mimeType).toEqual('text/plain');
     });
 
@@ -142,14 +141,6 @@ describe('Fragment class', () => {
         size: 0,
       });
       expect(fragment.isText).toBe(true);
-    });
-  });
-
-  describe('formats', () => {
-    test('fragment type is one of the supported types', () => {
-      const fragment = new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 });
-      expect(fragment.type).toEqual('text/plain');
-      expect(validTypes).toContain(fragment.type);
     });
   });
 
@@ -235,6 +226,67 @@ describe('Fragment class', () => {
 
       await Fragment.delete('1234', fragment.id);
       expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
+    });
+  });
+
+  describe('formats', () => {
+    test('fragment type is one of the supported types', () => {
+      expect(new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 }).formats).toEqual([
+        '.txt',
+      ]);
+      expect(new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 }).formats).toEqual([
+        '.md',
+        '.html',
+        '.txt',
+      ]);
+      expect(new Fragment({ ownerId: '1234', type: 'text/html', size: 0 }).formats).toEqual([
+        '.html',
+        '.txt',
+      ]);
+      expect(new Fragment({ ownerId: '1234', type: 'application/json', size: 0 }).formats).toEqual([
+        '.json',
+        '.txt',
+      ]);
+    });
+  });
+
+  describe('convertor()', () => {
+    test('converts markdown to html', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# hello'));
+      const { convertedData, mimeType } = await fragment.convertor('.html');
+      expect(convertedData).toBe('<h1>hello</h1>\n');
+      expect(mimeType).toBe('text/html');
+    });
+
+    // test .txt extension
+    test('converts markdown to txt', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# hello'));
+      const { convertedData, mimeType } = await fragment.convertor('.txt');
+      expect(convertedData).toBe('# hello');
+      expect(mimeType).toBe('text/plain');
+    });
+
+    test('converts html to txt', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/html', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('<h1>hello</h1>'));
+      const { convertedData, mimeType } = await fragment.convertor('.txt');
+      expect(convertedData).toBe('<h1>hello</h1>');
+      expect(mimeType).toBe('text/plain');
+    });
+
+    // json to txt
+    test('converts json to txt', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'application/json', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('{"hello":"world"}'));
+      const { convertedData, mimeType } = await fragment.convertor('.txt');
+      expect(convertedData).toBe('{"hello":"world"}');
+      expect(mimeType).toBe('text/plain');
     });
   });
 });

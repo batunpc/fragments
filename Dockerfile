@@ -2,7 +2,7 @@
 FROM node:16.15.1-alpine3.15@sha256:1fafca8cf41faf035192f5df1a5387656898bec6ac2f92f011d051ac2344f5c9 AS dependencies
 
 LABEL maintainer="Batuhan Ipci" \
-       description="Fragments node.js microservice"
+  description="Fragments node.js microservice"
 
 ENV PORT=8080
 ENV NODE_ENV=production
@@ -44,6 +44,6 @@ CMD ["npm", "start"]
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-   CMD curl --fail localhost:8080 || exit 1
+  CMD curl --fail localhost:8080 || exit 1
 
 ########################################= LAYER =########################################

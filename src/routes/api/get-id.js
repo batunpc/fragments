@@ -1,35 +1,44 @@
+const path = require('path');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
-const md = require('markdown-it')({
-  html: true,
-  linkify: true,
-  typographer: true,
-  // docs for other md options: https://github.com/markdown-it/markdown-it#init-with-presets-and-options
-});
 
 module.exports = async (req, res) => {
-  const contentType = Fragment.getExtension(req.params.id);
-  const id = req.params.id.split('.').shift();
+  const ext = path.extname(req.params.id);
+  const id = path.basename(req.params.id, ext);
+
   try {
     const fragment = await Fragment.byId(req.user, id);
-    const fragmentData = await fragment.getData();
+    logger.debug({ fragment }, `User's ${req.user} Fragment`);
 
-    if (contentType) {
-      let type = md.render(fragmentData.toString());
-      res.status(200).setHeader('Content-Type', contentType).send(type);
+    if (ext) {
+      // => with extension
+      // Extension is present, so we need to return the fragment's content
+      logger.debug(`Supported Media Type => ${ext} Converting...`);
+      const { convertedData, mimeType } = await fragment.convertor(ext);
+
+      if (!fragment.formats.includes(ext) || !convertedData) {
+        logger.error(`Abort - Unsupported Media Type => ${ext} `);
+        return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
+      }
+      logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
+      // response with the converted data
+      res.set('Content-Type', mimeType);
+      res.setHeader('content-length', fragment.size);
+      return res.status(200).send(convertedData + '\n');
+      // => RAW DATA
+    } else if (ext === '') {
+      const rawData = await fragment.getData();
+      res.type('Content-Type', fragment.type);
+      res.setHeader('content-length', fragment.size);
+      return res.status(200).send(rawData + '\n');
+      // potential errors
     } else {
-      res.set('Content-Type', fragment.type);
-      res.status(200).send(fragmentData);
-      logger.info(
-        createSuccessResponse({
-          fragment: fragmentData,
-          contentType: fragment.type,
-        })
-      );
+      logger.error(`Cannot get by id: ${id}`);
+      return res.status(500).json(createErrorResponse(500, 'Cannot get by id'));
     }
-  } catch (error) {
-    res.status(404).json(createErrorResponse(404, error.message));
-    logger.error('Fragment not found: ' + error);
+  } catch (e) {
+    logger.error(`${e} : Error getting fragment by id`);
+    return res.status(404).json(createErrorResponse(404, 'Fragment id does not exist '));
   }
 };

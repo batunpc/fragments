@@ -4,7 +4,11 @@ const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 
-const logger = require('../logger');
+const md = require('markdown-it')({
+  html: true,
+  linkify: true,
+  typographer: true,
+});
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -17,8 +21,6 @@ const {
 } = require('./data');
 
 const validTypes = ['text/plain', 'text/markdown', 'text/html', 'application/json'];
-
-module.exports.validTypes = validTypes;
 
 class Fragment {
   constructor({ id, ownerId, type, created, updated, size = 0 }) {
@@ -42,7 +44,7 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    return await listFragments(ownerId, expand);
+    return listFragments(ownerId, expand);
   }
 
   /**
@@ -115,12 +117,13 @@ class Fragment {
     return this.mimeType.startsWith('text/') ? true : false;
   }
 
-  /**
-   * Returns the formats into which this fragment type can be converted
-   * @returns {Array<string>} list of supported mime types
-   */
   get formats() {
-    return validTypes.filter((type) => type !== this.type);
+    if (this.mimeType === 'text/plain') return ['.txt'];
+    if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
+    if (this.mimeType === 'text/html') return ['.html', '.txt'];
+    if (this.mimeType === 'application/json') return ['.json', '.txt'];
+
+    return [];
   }
 
   /**
@@ -129,32 +132,34 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    return validTypes.some((element) => value.includes(element));
+    const { type } = contentType.parse(value);
+    return validTypes.includes(type);
   }
 
-  static getExtension(id) {
-    let ext = id.split('.').pop();
-    id = id.split('.').shift();
-    let contentType = '';
-
-    switch (ext) {
-      case 'txt':
-        contentType = 'text/plain';
-        break;
-      case 'md':
-        contentType = 'text/markdown';
-        break;
-      case 'html':
-        contentType = 'text/html';
-        break;
-      case 'json':
-        contentType = 'application/json';
-        break;
-      default:
-        contentType = '';
+  async convertor(extension) {
+    // ============ convert to TXT ============
+    if (this.mimeType === 'text/markdown') {
+      if (extension === '.html') {
+        const rawData = await this.getData();
+        return { convertedData: md.render(rawData.toString()), mimeType: 'text/html' };
+      } else if (extension === '.txt')
+        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
+      // if we don't know how to convert, return the original data
     }
-    logger.debug(`Fragment extension: ${ext} -> Content-Type: ${contentType}`);
-    return contentType;
+    if (this.mimeType === 'text/html') {
+      if (extension === '.txt')
+        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
+    }
+
+    if (this.mimeType === 'text/plain') {
+      if (extension === '.txt')
+        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
+    }
+    // ============ convert to JSON ============
+    if (this.mimeType === 'application/json') {
+      if (extension === '.txt')
+        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
+    }
   }
 }
 
