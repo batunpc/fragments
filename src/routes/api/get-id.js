@@ -32,13 +32,10 @@ module.exports = async (req, res) => {
       res.type('Content-Type', fragment.type);
       res.setHeader('content-length', fragment.size);
       return res.status(200).send(rawData + '\n');
-      // potential errors
-    } else {
-      logger.error(`Cannot get by id: ${id}`);
-      return res.status(500).json(createErrorResponse(500, 'Cannot get by id'));
     }
+    // potential errors
   } catch (e) {
-    logger.error(`${e} : Error getting fragment by id`);
-    return res.status(404).json(createErrorResponse(404, 'Fragment id does not exist '));
+    logger.error(`${e} : Unsupported Media Type`);
+    return res.status(404).json(createErrorResponse(415, 'Unsupported Media Type'));
   }
 };

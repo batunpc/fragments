@@ -3,23 +3,17 @@
 const request = require('supertest');
 const app = require('../../src/app');
 
-describe('GET /v1/fragments/:id', () => {
-  test('should deny invalid credentials', async () => {
-    await request(app).get('/v1/fragments/123').auth('batu@king.com', 'sad').expect(401);
-  });
-  test('unauthenticated users cannot access the route', async () => {
-    await request(app).get('/v1/fragments').expect(401);
-  });
-});
+const validPostReq = (url, type, data) => {
+  return request(app)
+    .post(`${url}`)
+    .auth('user1@email.com', 'password1')
+    .set('Content-Type', type)
+    .send(data);
+};
 
 describe('GET /v1/fragments/:id.ext', () => {
   test('getExt will return the corresponding content type', async () => {
-    // post a fragment
-    const req = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send('frag');
+    const req = await validPostReq('/v1/fragments', 'text/plain', 'frag');
 
     const body = JSON.parse(req.text);
     const response = await request(app)
@@ -27,5 +21,35 @@ describe('GET /v1/fragments/:id.ext', () => {
       .auth('user1@email.com', 'password1');
 
     expect(response.status).toBe(200);
+  });
+
+  test('404 not found the id', async () => {
+    const req = await validPostReq('/v1/fragments', 'text/plain', 'frag');
+    const body = JSON.parse(req.text);
+    const res = await request(app)
+      .get(`/v1/fragments/${body.fragment.id}notid`)
+      .auth('user1@email.com', 'password1');
+
+    expect(res.status).toBe(404);
+  });
+});
+
+describe('GET /v1/fragments/:id', () => {
+  test('if no extension specified raw data will be returned', async () => {
+    const req = await validPostReq('/v1/fragments', 'text/plain', 'frag');
+    const body = JSON.parse(req.text);
+    const response = await request(app)
+      .get(`/v1/fragments/${body.fragment.id}`)
+      .auth('user1@email.com', 'password1');
+
+    console.log(response.body);
+    expect(response.status).toBe(200);
+  });
+
+  test('if invalid id is provided 404 will be returned', async () => {
+    const response = await request(app)
+      .get('/v1/fragments/404')
+      .auth('user1@email.com', 'password1');
+    expect(response.status).toBe(404);
   });
 });
