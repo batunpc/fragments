@@ -29,7 +29,6 @@ module.exports = async (req, res) => {
       // => RAW DATA
     } else if (ext === '') {
       const rawData = await fragment.getData();
-      res.type('Content-Type', fragment.type);
       res.setHeader('content-length', fragment.size);
       return res.status(200).send(rawData + '\n');
     }
