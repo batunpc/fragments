@@ -256,7 +256,7 @@ describe('Fragment class', () => {
       await fragment.save();
       await fragment.setData(Buffer.from('# hello'));
       const { convertedData, mimeType } = await fragment.convertor('.html');
-      expect(convertedData).toBe('<h1>hello</h1>\n');
+      expect(convertedData).toBe('<h1>hello</h1>');
       expect(mimeType).toBe('text/html');
     });
 

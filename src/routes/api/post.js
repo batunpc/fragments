@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
 
     res.set('Location', `${process.env.API_URL}/v1/fragments/${fragment.id}`);
     res.location(API_URL + '/v1/fragments/' + fragment.id);
+
     res.status(201).json(
       createSuccessResponse({
         fragment: fragment,

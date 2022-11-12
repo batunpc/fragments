@@ -25,12 +25,14 @@ module.exports = async (req, res) => {
       // response with the converted data
       res.set('Content-Type', mimeType);
       res.setHeader('content-length', fragment.size);
-      return res.status(200).send(convertedData + '\n');
+      return res.status(200).send(convertedData);
       // => RAW DATA
     } else if (ext === '') {
       const rawData = await fragment.getData();
       res.setHeader('content-length', fragment.size);
-      return res.status(200).send(rawData + '\n');
+      res.set('Content-Type', fragment.type);
+
+      return res.status(200).send(rawData);
     }
     // potential errors
   } catch (e) {

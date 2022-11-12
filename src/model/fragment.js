@@ -137,29 +137,40 @@ class Fragment {
   }
 
   async convertor(extension) {
+    let mimeType, convertedData;
     // ============ convert to TXT ============
     if (this.mimeType === 'text/markdown') {
       if (extension === '.html') {
         const rawData = await this.getData();
-        return { convertedData: md.render(rawData.toString()), mimeType: 'text/html' };
-      } else if (extension === '.txt')
-        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
-      // if we don't know how to convert, return the original data
+        convertedData = md.render(rawData.toString());
+        mimeType = 'text/html';
+      } else if (extension === '.txt') {
+        convertedData = (await this.getData()).toString();
+        mimeType = 'text/plain';
+      }
     }
     if (this.mimeType === 'text/html') {
-      if (extension === '.txt')
-        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
+      if (extension === '.txt') {
+        convertedData = (await this.getData()).toString();
+        mimeType = 'text/plain';
+      }
     }
-
     if (this.mimeType === 'text/plain') {
-      if (extension === '.txt')
-        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
+      if (extension === '.txt') {
+        convertedData = (await this.getData()).toString();
+        mimeType = 'text/plain';
+      }
     }
-    // ============ convert to JSON ============
+    // // ============ convert to JSON ============
     if (this.mimeType === 'application/json') {
-      if (extension === '.txt')
-        return { convertedData: (await this.getData()).toString(), mimeType: 'text/plain' };
+      if (extension === '.txt') {
+        convertedData = (await this.getData()).toString();
+        mimeType = 'text/plain';
+      }
     }
+    // use .replace(/(\r?\n)?$/, '') to remove trailing newline
+    convertedData = convertedData.replace(/(\r?\n)?$/, '');
+    return { convertedData, mimeType };
   }
 }
 
