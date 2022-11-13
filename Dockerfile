@@ -37,8 +37,10 @@ COPY ./src ./src
 # Copy our HTPASSWD file
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
+RUN apk --update --no-cache add curl=7.80.0-r4
+
 # Run the server
-CMD ["npm", "start"]
+CMD ["node", "./src/server.js"]
 
 
 EXPOSE 8080
