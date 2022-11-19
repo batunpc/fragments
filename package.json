@@ -5,6 +5,7 @@
   "description": "Fragments back-end API",
   "main": "src/index.js",
   "scripts": {
+    "test:integration": "hurl --test --glob \"tests/integration/**/*.hurl\"",
     "test:watch": "jest -c jest.config.js --runInBand --watch --",
     "test": "jest -c jest.config.js --runInBand --",
     "coverage": "jest -c jest.config.js --runInBand --coverage",
@@ -25,6 +26,7 @@
   },
   "githubUrl": "https://github.com/batunpc/fragments#readme",
   "devDependencies": {
+    "@orangeopensource/hurl": "^1.8.0",
     "eslint": "^8.23.0",
     "jest": "^29.0.3",
     "nodemon": "^2.0.19",

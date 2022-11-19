@@ -23,7 +23,8 @@ module.exports = async (req, res) => {
       }
       logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
       // response with the converted data
-      res.set('Content-Type', mimeType);
+      //res.set('Content-Type', mimeType);
+      res.type(mimeType);
       res.setHeader('content-length', fragment.size);
       return res.status(200).send(convertedData);
       // => RAW DATA
