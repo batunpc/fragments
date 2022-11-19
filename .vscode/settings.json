@@ -9,5 +9,13 @@
   },
   "files.eol": "\n",
   "files.insertFinalNewline": true,
-  "javascript.suggestionActions.enabled": false
+  "javascript.suggestionActions.enabled": false,
+  "files.associations": {
+    "Dockerfile": "dockerfile",
+    "[Dd]ockerfile*": "dockerfile",
+    "docker-compose*": "yaml"
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
 }
