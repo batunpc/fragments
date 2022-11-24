@@ -1,7 +1,3 @@
-/**
- * Allows the authenticated user to delete one of their existing fragments with the given id.
- */
-
 const { Fragment } = require('../../model/fragment');
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 
