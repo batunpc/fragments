@@ -53,7 +53,8 @@ describe('GET /v1/fragments', () => {
       .auth('user1@email.com', 'password1')
       .expect(200);
 
-    expect(response.body.fragments).toEqual(expect.arrayContaining([fragmentId]));
+    // only check for the fragment id
+    expect(response.body.fragments[1].id).toEqual(fragmentId);
   });
 
   test('request fail', async () => {
