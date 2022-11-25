@@ -58,7 +58,7 @@
       "memoryReservation": 512,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "batunpc/fragments:latest",
+      "image": "",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
