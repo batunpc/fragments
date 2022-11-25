@@ -26,6 +26,31 @@ npm run lint # Run eslint
 
 ---
 
+## Commands
+
+> **Warning**: You first need to `POST` a fragment and paste into `<FRAGMENT-ID>` to work with GET method
+
+**GET**
+
+` curl -i -u user1@email.com:password1 "http://localhost:8080/v1/fragments/<FRAGMENT-ID>" `
+
+**POST (md)**
+
+` curl -s -u user1@email.com:password1 -H "Content-Type: text/markdown" -d "sample fragment" -X POST localhost:8080/v1/fragments | jq `
+
+**EXPAND**
+
+` curl -s -u user1@email.com:password1 "http://localhost:8080/v1/fragments?expand=1" | jq `
+
+**INFO**
+
+` curl -s -u user1@email.com:password1 "http://localhost:8080/v1/fragments/<FRAGMENT-ID>/info" | jq `
+
+**DELETE**
+
+` curl -i -X DELETE -u user1@email.com:password1 "localhost:8080/v1/fragments/<FRAGMENT-ID>" ` 
+
+
 ## Notes
 
 ### ◎ ESLint
