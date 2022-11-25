@@ -32,11 +32,11 @@
         },
         {
           "name": "AWS_COGNITO_CLIENT_ID",
-          "value": ""
+          "value": "3p8qf28sltqmcrs58ch328pred"
         },
         {
           "name": "AWS_COGNITO_POOL_ID",
-          "value": ""
+          "value": "us-east-1_UgGl7gYqm"
         },
         {
           "name": "AWS_REGION",
@@ -58,7 +58,7 @@
       "memoryReservation": 512,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "",
+      "image": "batun/fragments:latest",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
