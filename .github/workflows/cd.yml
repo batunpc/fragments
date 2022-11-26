@@ -18,6 +18,7 @@ on:
     tags:
       # Any tag starting with v... should trigger this workflow.
       - 'v**'
+      - 'debug-ecr'
 
 jobs:
   # NOTE: this assumes our CI jobs have already passed previously
