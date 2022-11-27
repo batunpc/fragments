@@ -100,3 +100,8 @@ jobs:
           cluster: fragments-cluster
           service: fragments-service
           wait-for-service-stability: true
+          AWS-ACCESS-KEY-ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS-SECRET-ACCESS-KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS-SESSION-TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS-REGION: us-east-1
+          AWS-S3-BUCKET-NAME: batunpc-fragments
