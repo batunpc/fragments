@@ -31,6 +31,30 @@
           "value": "http://localhost:8080"
         },
         {
+          "name": "AWS_COGNITO_CLIENT_ID",
+          "value": "3p8qf28sltqmcrs58ch328pred"
+        },
+        {
+          "name": "AWS_COGNITO_POOL_ID",
+          "value": "us-east-1_UgGl7gYqm"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-1"
+        },
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "value": "${{ secrets.AWS_ACCESS_KEY_ID }}"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "value": "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        },
+        {
+          "name": "AWS_SESSION_TOKEN",
+          "value": "${{ secrets.AWS_COGNITO_CLIENT_SECRET }}"
+        },
+        {
           "name": "PORT",
           "value": "8080"
         },
