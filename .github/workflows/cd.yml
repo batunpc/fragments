@@ -83,15 +83,9 @@ jobs:
           container-name: fragments
           # Use the image we just built and pushed to ECR for this tag
           image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO }}:${{ env.VERSION_TAG }}
-          environment-variables: |
-            LOG_LEVEL=info
-            NODE_ENV=production
-            AWS-ACCESS-KEY-ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS-SECRET-ACCESS-KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS-SESSION-TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
-            AWS-REGION=us-east-1
-            API_URL=http://localhost:8080
-            AWS_S3_BUCKET_NAME=batunpc-fragments
+          # environment-variables: |
+          #   LOG_LEVEL=info
+          #   NODE_ENV=production
           # #  ...
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
