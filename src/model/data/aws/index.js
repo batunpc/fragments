@@ -1,11 +1,11 @@
-// XXX: temporary use of memory-db until we add DynamoDB
+// src/model/data/aws/index.js
+// temporary use of memory-db until we add DynamoDB
 const MemoryDB = require('../memory/memory-db');
+const logger = require('../../../logger');
 const s3Client = require('./s3Client');
 const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-const logger = require('../../../logger');
 
-// Create two in-memory databases: one for fragment metadata and the other for raw data
-//const data = new MemoryDB();
+// Create in-memory database for fragment metadata
 const metadata = new MemoryDB();
 
 // Write a fragment's metadata to memory db. Returns a Promise
@@ -43,6 +43,9 @@ async function writeFragmentData(ownerId, id, data) {
   }
 }
 
+// Convert a stream of data into a Buffer, by collecting
+// chunks of data until finished, then assembling them together.
+// We wrap the whole thing in a Promise so it's easier to consume.
 const streamToBuffer = (stream) =>
   new Promise((resolve, reject) => {
     // As the data streams in, we'll collect it into an array.
@@ -88,12 +91,11 @@ async function readFragmentData(ownerId, id) {
 
 // Get a list of fragment ids/objects for the given user from memory db. Returns a Promise
 async function listFragments(ownerId, expand = false) {
-  // query throws
-  const fragments = await metadata.query(ownerId); // fragments is an array of objects
+  const fragments = await metadata.query(ownerId);
 
   // If we don't get anything back, or are supposed to give expanded fragments, return
   if (expand || !fragments) {
-    return fragments; // [] or [{id: '', fragment: {}}, ...]
+    return fragments;
   }
   // Otherwise, map to only send back the ids
   return fragments.map((fragment) => fragment.id);
