@@ -8,8 +8,7 @@ module.exports = async (req, res) => {
     if (!fragment) return res.status(404).json(createErrorResponse(404, 'Id not found'));
 
     await Fragment.delete(req.user, id);
-    // Return a 200 as success
-    res.status(200).json(createSuccessResponse(`Fragment ${id} deleted`));
+    res.status(200).json(createSuccessResponse());
   } catch (e) {
     res.status(500).json(createErrorResponse(500, e.message));
   }
