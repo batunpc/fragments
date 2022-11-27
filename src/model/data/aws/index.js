@@ -34,7 +34,13 @@ async function writeFragmentData(ownerId, id, data) {
 
   try {
     // Use our client to send the command
-    await s3Client.send(command);
+    //await s3Client.send(command);
+    data = await s3Client.send(command);
+    logger.info({ data }, 'Successfully uploaded data to S3');
+    logger.info(
+      { Bucket: params.Bucket, Key: params.Key },
+      'Successfully uploaded fragment data to S3'
+    );
   } catch (err) {
     // If anything goes wrong, log enough info that we can debug
     const { Bucket, Key } = params;
