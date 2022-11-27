@@ -129,6 +129,12 @@ async function deleteFragment(ownerId, id) {
     logger.error({ err, Bucket, Key }, 'Error deleting fragment data from S3');
     throw new Error('unable to delete fragment data');
   }
+
+  return Promise.all([
+    // Delete metadata
+    metadata.del(ownerId, id),
+    s3Client.send(command),
+  ]);
 }
 
 module.exports.listFragments = listFragments;
