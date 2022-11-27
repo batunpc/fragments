@@ -86,9 +86,12 @@ jobs:
           # environment-variables: |
           #   LOG_LEVEL=info
           #   NODE_ENV=production
-          #   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          #   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          #   aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          #   AWS-ACCESS-KEY-ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          #   AWS-SECRET-ACCESS-KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          #   AWS-SESSION-TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
+          #   AWS-REGION=us-east-1
+          #   API_URL=http://localhost:8080
+          #   AWS_S3_BUCKET_NAME=batunpc-fragments
           # #  ...
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -97,3 +100,8 @@ jobs:
           cluster: fragments-cluster
           service: fragments-service
           wait-for-service-stability: true
+          AWS-ACCESS-KEY-ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS-SECRET-ACCESS-KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS-SESSION-TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS-REGION: us-east-1
+          AWS-S3-BUCKET-NAME: batunpc-fragments

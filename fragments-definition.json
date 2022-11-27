@@ -43,18 +43,6 @@
           "value": "us-east-1"
         },
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "value": "${{ secrets.AWS_ACCESS_KEY_ID }}"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "value": "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-        },
-        {
-          "name": "AWS_SESSION_TOKEN",
-          "value": "${{ secrets.AWS_COGNITO_CLIENT_SECRET }}"
-        },
-        {
           "name": "PORT",
           "value": "8080"
         },
