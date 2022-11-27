@@ -48,7 +48,7 @@
         },
         {
           "name": "AWS_S3_BUCKET_NAME",
-          "value": "batunpc-fragments"
+          "value": "bipci-fragments"
         }
       ],
       "resourceRequirements": null,
