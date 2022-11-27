@@ -25,32 +25,7 @@
       "command": [],
       "linuxParameters": null,
       "cpu": 256,
-      "environment": [
-        {
-          "name": "PORT",
-          "value": "8080"
-        },
-        {
-          "name": "API_URL",
-          "value": "http://localhost:8080"
-        },
-        {
-          "name": "AWS_COGNITO_CLIENT_ID",
-          "value": "3p8qf28sltqmcrs58ch328pred"
-        },
-        {
-          "name": "AWS_COGNITO_POOL_ID",
-          "value": "us-east-1_UgGl7gYqm"
-        },
-        {
-          "name": "AWS_REGION",
-          "value": "us-east-1"
-        },
-        {
-          "name": "AWS_S3_BUCKET_NAME",
-          "value": "bipci-fragments"
-        }
-      ],
+      "environment": [],
       "resourceRequirements": null,
       "ulimits": null,
       "dnsServers": null,
