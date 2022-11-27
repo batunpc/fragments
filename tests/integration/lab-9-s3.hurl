@@ -31,6 +31,9 @@ url: header "Location"
 
 GET {{url}}
 
+[Options]
+verbose: true
+
 # Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1 
@@ -51,6 +54,9 @@ body == "Hello S3!"
 # ===========================================================================
 
 DELETE {{url}}
+
+[Options]
+verbose: true
 
 # Include HTTP Basic Auth credentials
 [BasicAuth]
