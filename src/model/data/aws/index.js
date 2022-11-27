@@ -121,11 +121,9 @@ async function deleteFragment(ownerId, id) {
     throw new Error('unable to delete fragment data');
   }
 
-  return Promise.all([
-    // Delete metadata
-    metadata.del(ownerId, id),
-  ]);
+  return metadata.del(ownerId, id);
 }
+
 module.exports.listFragments = listFragments;
 module.exports.writeFragment = writeFragment;
 module.exports.readFragment = readFragment;
