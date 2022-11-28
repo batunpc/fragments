@@ -13,3 +13,4 @@ jest*
 *.md
 # Include the license so we don't break the license/copyright
 !LICENSE.md
+minio/
