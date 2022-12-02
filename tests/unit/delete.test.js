@@ -1,11 +1,6 @@
 const app = require('../../src/app');
 const request = require('supertest');
 
-// write tests for the delete route shown above
-//
-// 1. test that a fragment can be deleted
-// 2. test that a fragment can not be deleted if it does not exist
-// 3. test that a fragment can not be deleted if the user is not authorized
 const validPostReq = (url, type, data) => {
   return request(app)
     .post(`${url}`)
@@ -32,5 +27,11 @@ describe('authenticated user deleting a non-existing fragment metadata', () => {
       .delete('/v1/fragments/404-')
       .auth('user1@email.com', 'password1')
       .expect(404);
+  });
+});
+
+describe('unauthenticated user deleting a fragment metadata', () => {
+  test('should return 401', () => {
+    return request(app).delete('/v1/fragments/404-').expect(401);
   });
 });
