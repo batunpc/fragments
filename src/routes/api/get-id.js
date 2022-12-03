@@ -9,8 +9,10 @@ module.exports = async (req, res) => {
 
   try {
     const fragment = await Fragment.byId(req.user, id);
-    logger.debug({ fragment }, `User's ${req.user} Fragment`);
 
+    if (!fragment) {
+      return res.status(404).send('Fragment not found');
+    }
     if (ext) {
       // => with extension
       // Extension is present, so we need to return the fragment's content
