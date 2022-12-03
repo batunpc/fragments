@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
     }
     // potential errors
   } catch (e) {
-    logger.error(`${e.message} : Not found => ${id} , ${req.user}`);
+    logger.error(`${e.message} : Not found => ID: ${id} , ext: ${ext}`);
     return res.status(404).json(createErrorResponse(404, 'Not found'));
   }
 };
