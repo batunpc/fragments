@@ -40,6 +40,7 @@ module.exports = async (req, res) => {
     // potential errors
   } catch (e) {
     logger.error(`${e.message} : Not found`);
+    logger.error(Fragment.byId(req.user, id));
     return res.status(404).json(createErrorResponse(404, 'Not found'));
   }
 };
