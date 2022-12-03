@@ -9,6 +9,8 @@ module.exports = async (req, res) => {
 
   try {
     const fragment = await Fragment.byId(req.user, id);
+    const fragmentRawData = await fragment.getData();
+
     logger.debug({ fragment }, `User's ${req.user} Fragment`);
 
     if (ext) {
@@ -29,15 +31,13 @@ module.exports = async (req, res) => {
       return res.status(200).send(convertedData);
       // => RAW DATA
     } else if (ext === '') {
-      const rawData = await fragment.getData();
       res.setHeader('content-length', fragment.size);
       res.set('Content-Type', fragment.type);
 
-      return res.status(200).send(rawData);
+      return res.status(200).send(fragmentRawData);
     }
     // potential errors
   } catch (e) {
-    //logger.debug(Fragment.byId(req.user, id));
     logger.error(`${e.message} : Not found => ${id} , ${req.user}`);
     return res.status(404).json(createErrorResponse(404, 'Not found'));
   }
