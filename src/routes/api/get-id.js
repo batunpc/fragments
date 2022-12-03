@@ -9,10 +9,8 @@ module.exports = async (req, res) => {
 
   try {
     const fragment = await Fragment.byId(req.user, id);
+    logger.debug({ fragment }, `User's ${req.user} Fragment`);
 
-    if (!fragment) {
-      return res.status(404).send('Fragment not found');
-    }
     if (ext) {
       // => with extension
       // Extension is present, so we need to return the fragment's content
@@ -39,8 +37,8 @@ module.exports = async (req, res) => {
     }
     // potential errors
   } catch (e) {
-    logger.error(`${e.message} : Not found`);
-    logger.error(Fragment.byId(req.user, id));
+    //logger.debug(Fragment.byId(req.user, id));
+    logger.error(`${e.message} : Not found => ${id} , ${req.user}`);
     return res.status(404).json(createErrorResponse(404, 'Not found'));
   }
 };
