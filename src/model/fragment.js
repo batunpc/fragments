@@ -83,7 +83,9 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   async getData() {
-    return readFragmentData(this.ownerId, this.id);
+    //return readFragmentData(this.ownerId, this.id);
+    const data = await readFragmentData(this.ownerId, this.id);
+    if (data) return data;
   }
 
   /**
