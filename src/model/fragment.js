@@ -93,7 +93,7 @@ class Fragment {
    */
   async setData(data) {
     if (data) {
-      this.size = data.length;
+      this.size = Buffer.byteLength(data);
       await writeFragmentData(this.ownerId, this.id, data);
       return this.save();
     } else throw new Error('Error writing fragment data');
