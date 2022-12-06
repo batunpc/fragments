@@ -55,7 +55,7 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     const fragment = await readFragment(ownerId, id);
-    if (fragment) return fragment;
+    if (fragment) return new Fragment(fragment);
     throw new Error(`Fragment ${id} not found`);
   }
 
@@ -83,9 +83,9 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   async getData() {
-    //return readFragmentData(this.ownerId, this.id);
-    const data = await readFragmentData(this.ownerId, this.id);
-    if (data) return data;
+    return readFragmentData(this.ownerId, this.id);
+    // const data = await readFragmentData(this.ownerId, this.id);
+    // if (data) return data;
   }
 
   /**
