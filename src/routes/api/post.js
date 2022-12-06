@@ -12,7 +12,11 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const fragment = new Fragment({ ownerId: req.user, type: req.get('Content-Type') });
+    const fragment = new Fragment({
+      ownerId: req.user,
+      type: req.get('Content-Type'),
+      size: Buffer.byteLength(req.body),
+    });
     await fragment.save();
     await fragment.setData(req.body);
     logger.info('Fragment saved' + fragment);
