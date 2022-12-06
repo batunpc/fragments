@@ -20,7 +20,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # # Install dependencies
-RUN npm ci --only=production 
+#RUN npm ci --only=production 
+# install sharp 
+RUN npm ci --only=production \
+  && npm install sharp@0.30.7
 
 # ################################# = Layer = #################################
 
