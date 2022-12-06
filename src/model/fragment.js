@@ -3,6 +3,7 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+const sharp = require('sharp');
 
 const md = require('markdown-it')({
   html: true,
@@ -20,7 +21,16 @@ const {
   deleteFragment,
 } = require('./data');
 
-const validTypes = ['text/plain', 'text/markdown', 'text/html', 'application/json'];
+const validTypes = [
+  'text/plain',
+  'text/markdown',
+  'text/html',
+  'application/json',
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
+];
 
 class Fragment {
   constructor({ id, ownerId, type, created, updated, size = 0 }) {
@@ -124,6 +134,10 @@ class Fragment {
     if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
     if (this.mimeType === 'text/html') return ['.html', '.txt'];
     if (this.mimeType === 'application/json') return ['.json', '.txt'];
+    if (this.mimeType === 'image/png') return ['.png'];
+    if (this.mimeType === 'image/jpeg') return ['.jpg', '.jpeg'];
+    if (this.mimeType === 'image/webp') return ['.webp'];
+    if (this.mimeType === 'image/gif') return ['.gif'];
 
     return [];
   }
@@ -170,6 +184,40 @@ class Fragment {
         mimeType = 'text/plain';
       }
     }
+
+    // ============ convert to PNG ============
+    if (this.mimeType === 'image/png') {
+      // use sharp to convert to other formats
+      if (extension === '.png') {
+        const rawData = await this.getData();
+        convertedData = sharp(rawData).toFormat('png').toBuffer();
+      }
+    }
+
+    // ============ convert to JPG ============
+    if (this.mimeType === 'image/jpeg') {
+      if (extension === '.jpg' || extension === '.jpeg') {
+        const rawData = await this.getData();
+        convertedData = sharp(rawData).toFormat('jpeg').toBuffer();
+      }
+    }
+
+    // ============ convert to WEBP ============
+    if (this.mimeType === 'image/webp') {
+      if (extension === '.webp') {
+        const rawData = await this.getData();
+        convertedData = sharp(rawData).toFormat('webp').toBuffer();
+      }
+    }
+
+    // ============ convert to GIF ============
+    if (this.mimeType === 'image/gif') {
+      if (extension === '.gif') {
+        const rawData = await this.getData();
+        convertedData = sharp(rawData).toFormat('gif').toBuffer();
+      }
+    }
+
     // use .replace(/(\r?\n)?$/, '') to remove trailing newline
     convertedData = convertedData.replace(/(\r?\n)?$/, '');
     return { convertedData, mimeType };

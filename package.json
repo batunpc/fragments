@@ -53,6 +53,7 @@
     "pino-colada": "^2.2.2",
     "pino-http": "^8.2.0",
     "pino-pretty": "^9.1.0",
+    "sharp": "^0.30.7",
     "stoppable": "^1.1.0"
   }
 }
