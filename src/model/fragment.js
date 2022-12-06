@@ -104,10 +104,12 @@ class Fragment {
    * @returns Promise
    */
   async setData(data) {
-    if (!data) throw new Error('Data is missing');
+    if (!data) {
+      throw new Error('Data is missing');
+    }
     this.size = Buffer.byteLength(data);
-    this.save();
-    return await writeFragmentData(this.ownerId, this.id, data);
+    await this.save();
+    return writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**
