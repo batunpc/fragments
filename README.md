@@ -29,27 +29,68 @@ npm run lint # Run eslint
 ## Commands
 
 > **Warning**: You first need to `POST` a fragment and paste into `<FRAGMENT-ID>` to work with GET method
+> **GET**
 
-**GET**
-
-` curl -i -u user1@email.com:password1 "http://localhost:8080/v1/fragments/<FRAGMENT-ID>" `
+```bash
+curl -i -u user1@email.com:password1 \
+"http://localhost:8080/v1/fragments/aabce737-9e66-445d-9be3-51d38304ccf1"
+```
 
 **POST (md)**
 
-` curl -s -u user1@email.com:password1 -H "Content-Type: text/markdown" -d "sample fragment" -X POST localhost:8080/v1/fragments | jq `
+```bash
+curl -s -u user1@email.com:password1 \
+-H "Content-Type: text/markdown" \
+-d "sample markdown fragment" -X POST localhost:8080/v1/fragments | jq
+```
+
+**POST (txt)**
+
+```bash
+curl -s -u user1@email.com:password1 \
+-H "Content-Type: text/plain" \
+-d "sample text fragment" -X POST localhost:8080/v1/fragments | jq
+```
+
+**POST (JSON)**
+
+```bash
+curl -s -u user1@email.com:password1 \
+-H "Content-Type: application/json" \
+-d "{"coffee": "macchiato"}" -X POST localhost:8080/v1/fragments | jq
+```
+
+**PUT**
+
+```bash
+curl -i \
+  -X PUT \
+  -u user1@email.com:password1 \
+  -H "Content-Type: text/plain" \
+  -d "This is updated data" \
+ "http://localhost:8080/v1/fragments?expand=1/4dcc65b6-9d57-453a-bd3a-63c107a51698"
+```
 
 **EXPAND**
 
-` curl -s -u user1@email.com:password1 "http://localhost:8080/v1/fragments?expand=1" | jq `
+```bash
+curl -s -u user1@email.com:password1 \
+"http://localhost:8080/v1/fragments?expand=1" | jq
+```
 
 **INFO**
 
-` curl -s -u user1@email.com:password1 "http://localhost:8080/v1/fragments/<FRAGMENT-ID>/info" | jq `
+```bash
+curl -s -u user1@email.com:password1 \
+"http://localhost:8080/v1/fragments/aabce737-9e66-445d-9be3-51d38304ccf1/info" | jq
+```
 
 **DELETE**
 
-` curl -i -X DELETE -u user1@email.com:password1 "localhost:8080/v1/fragments/<FRAGMENT-ID>" ` 
-
+```bash
+curl -i -X DELETE -u user1@email.com:password1 \
+"localhost:8080/v1/fragments/6d3dc284-309f-487a-a544-7d30cf2f1a07"
+```
 
 ## Notes
 
