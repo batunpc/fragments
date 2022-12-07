@@ -161,10 +161,10 @@ class Fragment {
     if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
     if (this.mimeType === 'text/html') return ['.html', '.txt'];
     if (this.mimeType === 'application/json') return ['.json', '.txt'];
-    if (this.mimeType === 'image/png') return ['.png'];
-    if (this.mimeType === 'image/jpeg') return ['.jpg', '.jpeg'];
-    if (this.mimeType === 'image/webp') return ['.webp'];
-    if (this.mimeType === 'image/gif') return ['.gif'];
+    if (this.mimeType === 'image/png') return ['.png', '.jpg', '.webp', '.gif'];
+    if (this.mimeType === 'image/jpeg') return ['.png', '.jpg', '.webp', '.gif'];
+    if (this.mimeType === 'image/webp') return ['.png', '.jpg', '.webp', '.gif'];
+    if (this.mimeType === 'image/gif') return ['.png', '.jpg', '.webp', '.gif'];
 
     return [];
   }
@@ -226,16 +226,20 @@ class Fragment {
       // use sharp to convert to other formats
       if (extension === '.png') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('png').toBuffer();
+        convertedData = await sharp(rawData).toFormat('png').toBuffer();
+        mimeType = 'image/png';
       } else if (extension === '.jpg' || extension === '.jpeg') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('jpeg').toBuffer();
+        convertedData = await sharp(rawData).toFormat('jpeg').toBuffer();
+        mimeType = 'image/jpeg';
       } else if (extension === '.webp') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('webp').toBuffer();
+        convertedData = await sharp(rawData).toFormat('webp').toBuffer();
+        mimeType = 'image/webp';
       } else if (extension === '.gif') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('gif').toBuffer();
+        convertedData = await sharp(rawData).toFormat('gif').toBuffer();
+        mimeType = 'image/gif';
       }
     }
 
@@ -243,16 +247,20 @@ class Fragment {
     if (this.mimeType === 'image/jpeg') {
       if (extension === '.jpg' || extension === '.jpeg') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('jpeg').toBuffer();
+        convertedData = await sharp(rawData).toFormat('jpeg').toBuffer();
+        mimeType = 'image/jpeg';
       } else if (extension === '.png') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('png').toBuffer();
+        convertedData = await sharp(rawData).toFormat('png').toBuffer();
+        mimeType = 'image/png';
       } else if (extension === '.webp') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('webp').toBuffer();
+        convertedData = await sharp(rawData).toFormat('webp').toBuffer();
+        mimeType = 'image/webp';
       } else if (extension === '.gif') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('gif').toBuffer();
+        convertedData = await sharp(rawData).toFormat('gif').toBuffer();
+        mimeType = 'image/gif';
       }
     }
 
@@ -260,16 +268,20 @@ class Fragment {
     if (this.mimeType === 'image/webp') {
       if (extension === '.webp') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('webp').toBuffer();
+        convertedData = await sharp(rawData).toFormat('webp').toBuffer();
+        mimeType = 'image/webp';
       } else if (extension === '.png') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('png').toBuffer();
+        convertedData = await sharp(rawData).toFormat('png').toBuffer();
+        mimeType = 'image/png';
       } else if (extension === '.jpg' || extension === '.jpeg') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('jpeg').toBuffer();
+        convertedData = await sharp(rawData).toFormat('jpeg').toBuffer();
+        mimeType = 'image/jpeg';
       } else if (extension === '.gif') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('gif').toBuffer();
+        convertedData = await sharp(rawData).toFormat('gif').toBuffer();
+        mimeType = 'image/gif';
       }
     }
 
@@ -277,16 +289,20 @@ class Fragment {
     if (this.mimeType === 'image/gif') {
       if (extension === '.gif') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('gif').toBuffer();
+        convertedData = await sharp(rawData).toFormat('gif').toBuffer();
+        mimeType = 'image/gif';
       } else if (extension === '.png') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('png').toBuffer();
+        convertedData = await sharp(rawData).toFormat('png').toBuffer();
+        mimeType = 'image/png';
       } else if (extension === '.jpg' || extension === '.jpeg') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('jpeg').toBuffer();
+        convertedData = await sharp(rawData).toFormat('jpeg').toBuffer();
+        mimeType = 'image/jpeg';
       } else if (extension === '.webp') {
         const rawData = await this.getData();
-        convertedData = sharp(rawData).toFormat('webp').toBuffer();
+        convertedData = await sharp(rawData).toFormat('webp').toBuffer();
+        mimeType = 'image/webp';
       }
     }
     // use .replace(/(\r?\n)?$/, '') to remove trailing newline
