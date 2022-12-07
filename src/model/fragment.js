@@ -37,7 +37,8 @@ class Fragment {
     if (!ownerId || !type) throw new Error('ownerId and/or type missing');
     if (typeof size !== 'number') throw new Error(`Fragment size must be a number (got ${size})`);
     else if (size < 0) throw new Error(`Fragment size must be a positive number (got: ${size})`);
-    if (!Fragment.isSupportedType(type)) throw new Error(`Unsupported fragment type: ${type}`);
+    else if (!validTypes.some((validType) => type.includes(validType)))
+      throw new Error('type not supported');
 
     this.id = id || randomUUID();
     this.ownerId = ownerId;
@@ -54,7 +55,15 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    return listFragments(ownerId, expand);
+    try {
+      const results = await listFragments(ownerId, expand);
+      if (expand) {
+        return results.map((fragment) => new Fragment(fragment));
+      }
+      return results;
+    } catch (err) {
+      return [];
+    }
   }
 
   /**
@@ -75,17 +84,21 @@ class Fragment {
    * @param {string} id fragment's id
    * @returns Promise
    */
-  static delete(ownerId, id) {
-    return deleteFragment(ownerId, id);
+  static async delete(ownerId, id) {
+    return await deleteFragment(ownerId, id);
   }
 
   /**
    * Saves the current fragment to the database
    * @returns Promise
    */
-  save() {
-    this.updated = new Date().toISOString();
-    return writeFragment(this);
+  async save() {
+    try {
+      this.updated = new Date().toISOString();
+      return await writeFragment(this);
+    } catch (err) {
+      throw new Error('unable to save fragment');
+    }
   }
 
   /**
@@ -93,9 +106,11 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   async getData() {
-    return readFragmentData(this.ownerId, this.id);
-    // const data = await readFragmentData(this.ownerId, this.id);
-    // if (data) return data;
+    try {
+      return await readFragmentData(this.ownerId, this.id);
+    } catch (err) {
+      throw new Error('unable to read fragment data');
+    }
   }
 
   /**
@@ -104,12 +119,23 @@ class Fragment {
    * @returns Promise
    */
   async setData(data) {
-    if (!data) {
-      throw new Error('Data is missing');
+    // if (!data) {
+    //   throw new Error('Data is missing');
+    // }
+    // this.size = Buffer.byteLength(data);
+    // await this.save();
+    // return writeFragmentData(this.ownerId, this.id, data);
+    if (!Buffer.isBuffer(data)) {
+      throw new Error('data is not a Buffer');
+    } else {
+      this.size = Buffer.byteLength(data);
+      this.save();
+      try {
+        return await writeFragmentData(this.ownerId, this.id, data);
+      } catch (err) {
+        throw new Error('unable to set fragment data');
+      }
     }
-    this.size = Buffer.byteLength(data);
-    await this.save();
-    return writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**
@@ -264,7 +290,7 @@ class Fragment {
       }
     }
     // use .replace(/(\r?\n)?$/, '') to remove trailing newline
-    convertedData = convertedData.replace(/(\r?\n)?$/, '');
+    //convertedData = convertedData.replace(/(\r?\n)?$/, '');
     return { convertedData, mimeType };
   }
 }
