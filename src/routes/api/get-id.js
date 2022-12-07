@@ -1,7 +1,7 @@
 const path = require('path');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
-const { createSuccessResponse, createErrorResponse } = require('../../response');
+const { createErrorResponse } = require('../../response');
 
 module.exports = async (req, res) => {
   const ext = path.extname(req.params.id);
@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
         );
         return res.status(415).json(createErrorResponse(415, 'Unsupported Media Type'));
       }
-      logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
+      //logger.debug(createSuccessResponse({ data: convertedData, mimeType }));
       // response with the converted data
       //res.set('Content-Type', mimeType);
       res.type(mimeType);

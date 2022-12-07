@@ -161,10 +161,10 @@ class Fragment {
     if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
     if (this.mimeType === 'text/html') return ['.html', '.txt'];
     if (this.mimeType === 'application/json') return ['.json', '.txt'];
-    if (this.mimeType === 'image/png') return ['.png', '.jpg', '.webp', '.gif'];
-    if (this.mimeType === 'image/jpeg') return ['.png', '.jpg', '.webp', '.gif'];
-    if (this.mimeType === 'image/webp') return ['.png', '.jpg', '.webp', '.gif'];
-    if (this.mimeType === 'image/gif') return ['.png', '.jpg', '.webp', '.gif'];
+    if (this.mimeType === 'image/png') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    if (this.mimeType === 'image/jpeg') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    if (this.mimeType === 'image/webp') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    if (this.mimeType === 'image/gif') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
 
     return [];
   }
