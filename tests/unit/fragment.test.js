@@ -231,22 +231,19 @@ describe('Fragment class', () => {
 
   describe('formats', () => {
     test('fragment type is one of the supported types', () => {
-      expect(new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 }).formats).toEqual([
+      expect(new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 }).getValidExts).toEqual([
         '.txt',
       ]);
-      expect(new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 }).formats).toEqual([
-        '.md',
+      expect(
+        new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 }).getValidExts
+      ).toEqual(['.md', '.html', '.txt']);
+      expect(new Fragment({ ownerId: '1234', type: 'text/html', size: 0 }).getValidExts).toEqual([
         '.html',
         '.txt',
       ]);
-      expect(new Fragment({ ownerId: '1234', type: 'text/html', size: 0 }).formats).toEqual([
-        '.html',
-        '.txt',
-      ]);
-      expect(new Fragment({ ownerId: '1234', type: 'application/json', size: 0 }).formats).toEqual([
-        '.json',
-        '.txt',
-      ]);
+      expect(
+        new Fragment({ ownerId: '1234', type: 'application/json', size: 0 }).getValidExts
+      ).toEqual(['.json', '.txt']);
     });
   });
 

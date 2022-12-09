@@ -1,46 +1,35 @@
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
-const API_URL = process.env.API_URL || 'http://localhost:8080';
 
 module.exports = async (req, res) => {
   try {
-    const existingFragment = await Fragment.byId(req.user, req.params.id);
+    const fragment = await Fragment.byId(req.user, req.params.id);
 
-    // If existingFragment content type is trying to be converted
+    // If fragment content type is trying to be converted
     // 400 Bad Request
-    if (req.get('Content-Type') !== existingFragment.type) {
+    if (req.get('Content-Type') !== fragment.type) {
       logger.error('Bad Request');
       return res.status(400).json(createErrorResponse(400, 'Bad Request'));
     }
 
-    const newFragment = new Fragment({
-      ownerId: req.user,
-      id: req.params.id,
-      created: existingFragment.created,
-      type: req.get('Content-Type'),
-    });
-    await newFragment.save();
-    await newFragment.setData(req.body);
+    await fragment.setData(req.body);
+    await fragment.save();
     /* 
-    
     add a toJSON() method to an object, which returns the Object to serialize, and you can strip things out that you don't want
-
     */
-    newFragment.toJSON = () => {
+    fragment.toJSON = () => {
       return {
-        id: newFragment.id,
-        created: existingFragment.created,
-        updated: newFragment.updated,
-        size: newFragment.size,
-        type: existingFragment.type,
-        // create array
-        formats: [newFragment.type],
+        id: fragment.id,
+        created: fragment.created,
+        updated: fragment.updated,
+        size: fragment.size,
+        type: fragment.type,
+        formats: fragment.formats,
       };
     };
 
-    res.set('Location', `${API_URL}/v1/fragments/${newFragment.id}`);
-    res.status(200).json(createSuccessResponse({ newFragment: newFragment }));
+    res.status(200).json(createSuccessResponse({ fragment: fragment }));
   } catch (err) {
     logger.error({ err }, 'Error getting fragment by id');
 

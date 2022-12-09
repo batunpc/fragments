@@ -93,12 +93,8 @@ class Fragment {
    * @returns Promise
    */
   async save() {
-    try {
-      this.updated = new Date().toISOString();
-      return await writeFragment(this);
-    } catch (err) {
-      throw new Error('unable to save fragment');
-    }
+    this.updated = new Date().toISOString();
+    return await writeFragment(this);
   }
 
   /**
@@ -106,11 +102,7 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   async getData() {
-    try {
-      return await readFragmentData(this.ownerId, this.id);
-    } catch (err) {
-      throw new Error('unable to read fragment data');
-    }
+    return await readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -157,6 +149,48 @@ class Fragment {
   }
 
   get formats() {
+    const mimeTypes = {
+      'text/plain': ['text/plain'],
+      'text/markdown': ['text/markdown', 'text/html', 'text/plain'],
+      'text/html': ['text/html', 'text/plain'],
+      'application/json': ['application/json', 'text/plain'],
+      'image/png': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+      'image/jpeg': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+      'image/webp': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+      'image/gif': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+    };
+
+    let supportedFormats;
+    switch (this.mimeType) {
+      case 'text/plain':
+        supportedFormats = mimeTypes['text/plain'];
+        break;
+      case 'text/markdown':
+        supportedFormats = mimeTypes['text/markdown'];
+        break;
+      case 'text/html':
+        supportedFormats = mimeTypes['text/html'];
+        break;
+      case 'application/json':
+        supportedFormats = mimeTypes['application/json'];
+        break;
+      case 'image/png':
+        supportedFormats = mimeTypes['image/png'];
+        break;
+      case 'image/jpeg':
+        supportedFormats = mimeTypes['image/jpeg'];
+        break;
+      case 'image/webp':
+        supportedFormats = mimeTypes['image/webp'];
+        break;
+      case 'image/gif':
+        supportedFormats = mimeTypes['image/gif'];
+        break;
+    }
+    return supportedFormats;
+  }
+
+  get getValidExts() {
     if (this.mimeType === 'text/plain') return ['.txt'];
     if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
     if (this.mimeType === 'text/html') return ['.html', '.txt'];
