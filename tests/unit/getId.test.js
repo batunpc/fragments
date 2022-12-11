@@ -52,4 +52,14 @@ describe('GET /v1/fragments/:id', () => {
       .auth('user1@email.com', 'password1');
     expect(response.status).toBe(404);
   });
+
+  test('if invalid extension is provided 415 will be returned', async () => {
+    const req = await validPostReq('/v1/fragments', 'text/plain', 'frag');
+    const body = JSON.parse(req.text);
+    const response = await request(app)
+      .get(`/v1/fragments/${body.fragment.id}.html`)
+      .auth('user1@email.com', 'password1');
+
+    expect(response.status).toBe(415);
+  });
 });

@@ -22,7 +22,6 @@ module.exports = async (req, res) => {
     //logger.info('Fragment saved' + fragment);
 
     res.set('Location', `${API_URL}/v1/fragments/${fragment.id}`);
-    //res.location(API_URL + '/v1/fragments/' + fragment.id);
 
     res.status(201).json(
       createSuccessResponse({

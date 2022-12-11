@@ -1,5 +1,6 @@
 const { Fragment } = require('../../src/model/fragment');
-
+const fs = require('fs');
+const path = require('path');
 // Wait for a certain number of ms. Returns a Promise.
 const wait = async (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -24,7 +25,7 @@ describe('Fragment class', () => {
     });
 
     test('type can be a simple media type', () => {
-      const fragment = new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 });
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/plain', size: 7 });
       expect(fragment.type).toEqual('text/plain');
     });
 
@@ -141,6 +142,13 @@ describe('Fragment class', () => {
         size: 0,
       });
       expect(fragment.isText).toBe(true);
+
+      const fragment2 = new Fragment({
+        ownerId: '1234',
+        type: 'application/json',
+        size: 0,
+      });
+      expect(fragment2.isText).toBe(false);
     });
   });
 
@@ -229,21 +237,23 @@ describe('Fragment class', () => {
     });
   });
 
-  describe('formats', () => {
-    test('fragment type is one of the supported types', () => {
-      expect(new Fragment({ ownerId: '1234', type: 'text/plain', size: 0 }).getValidExts).toEqual([
-        '.txt',
-      ]);
-      expect(
-        new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 }).getValidExts
-      ).toEqual(['.md', '.html', '.txt']);
-      expect(new Fragment({ ownerId: '1234', type: 'text/html', size: 0 }).getValidExts).toEqual([
-        '.html',
-        '.txt',
-      ]);
-      expect(
-        new Fragment({ ownerId: '1234', type: 'application/json', size: 0 }).getValidExts
-      ).toEqual(['.json', '.txt']);
+  describe('getValidExts returns the corresponding extensions', () => {
+    test('getValidExts returns the corresponding extensions', () => {
+      const validExts = {
+        'text/plain': ['.txt'],
+        'text/markdown': ['.md', '.html', '.txt'],
+        'text/html': ['.html', '.txt'],
+        'application/json': ['.json', '.txt'],
+        'image/png': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
+        'image/jpeg': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
+        'image/webp': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
+        'image/gif': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
+      };
+      Object.keys(validExts).forEach((type) => {
+        expect(new Fragment({ ownerId: '1234', type, size: 0 }).getValidExts).toEqual(
+          validExts[type]
+        );
+      });
     });
   });
 
@@ -257,7 +267,15 @@ describe('Fragment class', () => {
       expect(mimeType).toBe('text/html');
     });
 
-    // test .txt extension
+    test('converts markdown to markdown', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# hello'));
+      const { convertedData, mimeType } = await fragment.convertor('.md');
+      expect(convertedData).toBe('# hello');
+      expect(mimeType).toBe('text/markdown');
+    });
+
     test('converts markdown to txt', async () => {
       const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
       await fragment.save();
@@ -265,6 +283,27 @@ describe('Fragment class', () => {
       const { convertedData, mimeType } = await fragment.convertor('.txt');
       expect(convertedData).toBe('# hello');
       expect(mimeType).toBe('text/plain');
+    });
+
+    // MD to MD
+    test('converts markdown to markdown', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# hello'));
+      const { convertedData, mimeType } = await fragment.convertor('.md');
+      expect(convertedData).toBe('# hello');
+      expect(mimeType).toBe('text/markdown');
+    });
+
+    // md to text/markdown
+    test('converts markdown to markdown', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/markdown', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('# hello'));
+      const { convertedData, mimeType } = await fragment.convertor('.md');
+      expect(convertedData).toBe('# hello');
+
+      expect(mimeType).toBe('text/markdown');
     });
 
     test('converts html to txt', async () => {
@@ -276,7 +315,15 @@ describe('Fragment class', () => {
       expect(mimeType).toBe('text/plain');
     });
 
-    // json to txt
+    test('converts html to html', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'text/html', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('<h1>hello</h1>'));
+      const { convertedData, mimeType } = await fragment.convertor('.html');
+      expect(convertedData).toBe('<h1>hello</h1>');
+      expect(mimeType).toBe('text/html');
+    });
+
     test('converts json to txt', async () => {
       const fragment = new Fragment({ ownerId: '1234', type: 'application/json', size: 0 });
       await fragment.save();
@@ -284,6 +331,95 @@ describe('Fragment class', () => {
       const { convertedData, mimeType } = await fragment.convertor('.txt');
       expect(convertedData).toBe('{"hello":"world"}');
       expect(mimeType).toBe('text/plain');
+    });
+
+    // json to json
+    test('converts json to json', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'application/json', size: 0 });
+      await fragment.save();
+      await fragment.setData(Buffer.from('{"hello":"world"}'));
+      const { convertedData, mimeType } = await fragment.convertor('.json');
+      expect(convertedData).toBe('{"hello":"world"}');
+      expect(mimeType).toBe('application/json');
+    });
+  });
+
+  describe('formats function properly returns the supported formats for the given mime type', () => {
+    test('formats function returns the supported formats for the given mime type', () => {
+      expect(new Fragment({ ownerId: '1234', type: 'text/plain', size: 7 }).formats).toEqual([
+        'text/plain',
+      ]);
+      expect(new Fragment({ ownerId: '1234', type: 'text/markdown', size: 7 }).formats).toEqual([
+        'text/markdown',
+        'text/html',
+        'text/plain',
+      ]);
+      expect(new Fragment({ ownerId: '1234', type: 'text/html', size: 7 }).formats).toEqual([
+        'text/html',
+        'text/plain',
+      ]);
+      expect(new Fragment({ ownerId: '1234', type: 'application/json', size: 7 }).formats).toEqual([
+        'application/json',
+        'text/plain',
+      ]);
+
+      const formats = new Fragment({ ownerId: '1234', type: 'image/gif', size: 7 }).formats;
+      formats.forEach((format) => {
+        expect(new Fragment({ ownerId: '1234', type: format, size: 7 }).formats).toEqual(formats);
+      });
+
+      // get the formats for each mime type and then test it
+      const formats1 = new Fragment({ ownerId: '1234', type: 'image/webp', size: 7 }).formats;
+      formats1.forEach((format) => {
+        expect(new Fragment({ ownerId: '1234', type: format, size: 7 }).formats).toEqual(formats1);
+      });
+
+      // get the formats for each mime type and then test it
+      const formats2 = new Fragment({ ownerId: '1234', type: 'image/jpeg', size: 7 }).formats;
+      formats2.forEach((format) => {
+        expect(new Fragment({ ownerId: '1234', type: format, size: 7 }).formats).toEqual(formats2);
+      });
+
+      // get the formats for each mime type and then test it
+      const formats3 = new Fragment({ ownerId: '1234', type: 'image/png', size: 7 }).formats;
+      formats3.forEach((format) => {
+        expect(new Fragment({ ownerId: '1234', type: format, size: 7 }).formats).toEqual(formats3);
+      });
+    });
+  });
+
+  /* ===== IMAGE CONVERTER TEST ALGORITHM =====  */
+  describe('converts image files to other formats', () => {
+    const testImageConversion = async (imageFormat, expectedFormat) => {
+      const fragment = new Fragment({ ownerId: '1234', type: `image/${imageFormat}`, size: 0 });
+      await fragment.setData(
+        fs.readFileSync(path.join(__dirname, '..', `img/${imageFormat}File.${imageFormat}`))
+      );
+      await fragment.save();
+      const { mimeType } = await fragment.convertor(`.${expectedFormat}`);
+      expect(mimeType).toBe(`image/${expectedFormat}`);
+      expect(fragment.data).not.toBeNull();
+    };
+
+    const imageFormats = ['gif', 'jpeg', 'png', 'webp'];
+    const expectedFormats = ['gif', 'jpeg', 'png', 'webp'];
+
+    // test all possible combinations of the image formats
+    imageFormats.forEach((imageFormat) => {
+      expectedFormats.forEach((expectedFormat) => {
+        test(`converts ${imageFormat} to ${expectedFormat}`, async () => {
+          await testImageConversion(imageFormat, expectedFormat);
+        });
+      });
+    });
+    // cover every branch of the convertor function
+    test('converts image to image', async () => {
+      const fragment = new Fragment({ ownerId: '1234', type: 'image/gif', size: 0 });
+      await fragment.setData(fs.readFileSync(path.join(__dirname, '..', 'img/gifFile.gif')));
+      await fragment.save();
+      const { mimeType } = await fragment.convertor('.gif');
+      expect(mimeType).toBe('image/gif');
+      expect(fragment.data).not.toBeNull();
     });
   });
 });

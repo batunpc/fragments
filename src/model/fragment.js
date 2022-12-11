@@ -55,15 +55,11 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    try {
-      const results = await listFragments(ownerId, expand);
-      if (expand) {
-        return results.map((fragment) => new Fragment(fragment));
-      }
-      return results;
-    } catch (err) {
-      return [];
+    const results = await listFragments(ownerId, expand);
+    if (expand) {
+      return results.map((fragment) => new Fragment(fragment));
     }
+    return results;
   }
 
   /**
@@ -122,11 +118,7 @@ class Fragment {
     } else {
       this.size = Buffer.byteLength(data);
       this.save();
-      try {
-        return await writeFragmentData(this.ownerId, this.id, data);
-      } catch (err) {
-        throw new Error('unable to set fragment data');
-      }
+      return await writeFragmentData(this.ownerId, this.id, data);
     }
   }
 
@@ -191,16 +183,13 @@ class Fragment {
   }
 
   get getValidExts() {
-    if (this.mimeType === 'text/plain') return ['.txt'];
-    if (this.mimeType === 'text/markdown') return ['.md', '.html', '.txt'];
-    if (this.mimeType === 'text/html') return ['.html', '.txt'];
-    if (this.mimeType === 'application/json') return ['.json', '.txt'];
-    if (this.mimeType === 'image/png') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
-    if (this.mimeType === 'image/jpeg') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
-    if (this.mimeType === 'image/webp') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
-    if (this.mimeType === 'image/gif') return ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
-
-    return [];
+    let validExts;
+    if (this.mimeType === 'text/plain') validExts = ['.txt'];
+    if (this.mimeType === 'text/markdown') validExts = ['.md', '.html', '.txt'];
+    if (this.mimeType === 'text/html') validExts = ['.html', '.txt'];
+    if (this.mimeType === 'application/json') validExts = ['.json', '.txt'];
+    if (this.mimeType.startsWith('image/')) validExts = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    return validExts;
   }
 
   /**
