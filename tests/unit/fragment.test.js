@@ -404,7 +404,6 @@ describe('Fragment class', () => {
     const imageFormats = ['gif', 'jpeg', 'png', 'webp'];
     const expectedFormats = ['gif', 'jpeg', 'png', 'webp'];
 
-    // test all possible combinations of the image formats
     imageFormats.forEach((imageFormat) => {
       expectedFormats.forEach((expectedFormat) => {
         test(`converts ${imageFormat} to ${expectedFormat}`, async () => {
@@ -412,7 +411,7 @@ describe('Fragment class', () => {
         });
       });
     });
-    // cover every branch of the convertor function
+
     test('converts image to image', async () => {
       const fragment = new Fragment({ ownerId: '1234', type: 'image/gif', size: 0 });
       await fragment.setData(fs.readFileSync(path.join(__dirname, '..', 'img/gifFile.gif')));
